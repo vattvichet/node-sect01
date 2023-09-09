@@ -1,10 +1,42 @@
 
 const fs = require('fs');
 const http = require('http');
+const url = require('url');
+
+
+const templateOverview = fs.readFileSync('./starter/templates/template-overview.html', 'utf-8',);
+const templateCard = fs.readFileSync('./starter/templates/template-card.html', 'utf-8',);
+const templateProduct = fs.readFileSync('./starter/templates/template-product.html', 'utf-8',);
+
+
+const data = fs.readFileSync('./starter/dev-data/data.json', 'utf-8',);
+
+
+const dataObj = JSON.parse(data);
+
+
 
 const server = http.createServer((request, response) => {
-    console.log(request);
-    response.end("Hello from the sever");
+    const pathName = request.url;
+    if (pathName === '/' || pathName === '/overview') {
+        response.writeHead(404, {
+            'Content-type': 'text/html'
+        });
+        const cardHtml = dataObj.map(e => replaceTemp);
+        response.end(templateOverview);
+    } else if (pathName === '/product') {
+        response.end("This is our product");
+    } else if (pathName === '/api') {
+        response.writeHead(200, { 'Content-type': 'application/json' });
+        response.end(data);
+    }
+    else {
+        response.writeHead(404, {
+            'Content-type': 'text/html'
+        });
+        response.end("<h1> Not Found </h1>");
+    }
+
 
 });
 
